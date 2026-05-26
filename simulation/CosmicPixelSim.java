@@ -18,29 +18,21 @@ public class CosmicPixelSim extends JPanel implements ActionListener{
 	
 	private static final Color[] gradient1 = new Color[] {
 		new Color(0, 0, 0),
-		new Color(200, 0, 255),
+		// new Color(200, 0, 255),
 		new Color(255, 0, 0),
-		new Color(200, 150, 0),
-		new Color(255, 255, 255),
-		new Color(255, 255, 255),
-		new Color(255, 255, 255),
-		new Color(255, 255, 255),
-		new Color(255, 255, 255),
-		new Color(255, 255, 255),
+		new Color(255, 190, 0),
 		new Color(255, 255, 255)
 	};
 
 	private static final Color[] gradient2 = new Color[] {
 		new Color(0, 0, 0),
-		new Color(0, 90, 255),
-		new Color(0, 210, 0),
-		new Color(255, 255, 0),
-		new Color(255, 255, 255),
-		new Color(255, 255, 255),
+		// new Color(0, 90, 255),
+		new Color(0, 255, 0),
+		new Color(190, 255, 0),
 		new Color(255, 255, 255)
 	};
 
-	private static final Color[][] gradients = new Color[][] {gradient1};
+	private static final Color[][] gradients = new Color[][] {gradient1, gradient2};
 	
 	private final float[][] pixValues = new float[XSIZE][YSIZE];
 	private final int[][] pixGradientType = new int[XSIZE][YSIZE];
@@ -67,18 +59,16 @@ public class CosmicPixelSim extends JPanel implements ActionListener{
 
 	// get the color from the gradient based on the value of the value, which is between 0 and 1
 	Color getColorFromGradient(float val, int gradientTypeIndex) {
-		int colorvalR = 0, colorvalG = 0, colorvalB = 0;
-		float gradientStepLength = 1.0f/gradients[gradientTypeIndex].length;
-
-		for( int i = 0; i<gradients[gradientTypeIndex].length-1; i++) {
-			if( val >= i*gradientStepLength && val < (i+1)*gradientStepLength ) {
-				float localVal = (val - i*gradientStepLength)/gradientStepLength;
-				colorvalR = (int)(gradients[gradientTypeIndex][i].getRed()*(1-localVal) + gradients[gradientTypeIndex][i+1].getRed()*localVal);
-				colorvalG = (int)(gradients[gradientTypeIndex][i].getGreen()*(1-localVal) + gradients[gradientTypeIndex][i+1].getGreen()*localVal);
-				colorvalB = (int)(gradients[gradientTypeIndex][i].getBlue()*(1-localVal) + gradients[gradientTypeIndex][i+1].getBlue()*localVal);
-			}
-		}
-
+		Color[] choosenGradient = gradients[gradientTypeIndex];
+		float gradientStepLength = 1.0f/choosenGradient.length;
+		int startIndex = Math.min((int)(val * choosenGradient.length), choosenGradient.length-1);
+		int stopIndex = Math.min(startIndex+1, choosenGradient.length-1);
+		Color startColor = choosenGradient[startIndex];
+		Color endColor = choosenGradient[stopIndex];
+		float localVal = (val - startIndex*gradientStepLength)/gradientStepLength;
+		int colorvalR = (int)(startColor.getRed()*(1-localVal) + endColor.getRed()*localVal);
+		int colorvalG = (int)(startColor.getGreen()*(1-localVal) + endColor.getGreen()*localVal);
+		int colorvalB = (int)(startColor.getBlue()*(1-localVal) + endColor.getBlue()*localVal);
 		return new Color(colorvalR, colorvalG, colorvalB);
 	}
 	
@@ -129,7 +119,7 @@ public class CosmicPixelSim extends JPanel implements ActionListener{
 						for( int i = 0; i<rayLength; i++) {
 							int x = (int) (rayStartX + (rayStopX-rayStartX)*i/rayLength);
 							int y = (int) (rayStartY + (rayStopY-rayStartY)*i/rayLength);
-							pixValues[x][y] = 0.9f;
+							pixValues[x][y] = 1.0f;
 							pixGradientType[x][y] = rayGradient;
 						}	
 					}
