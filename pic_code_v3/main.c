@@ -71,7 +71,7 @@ void main(void) {
     SSP1CON1bits.SSPEN = 1;
     
     // set DAC output
-    DAC1_SetOutput(0b11100);
+    DAC1_SetOutput(0b11111);
     
     // variables
     double cosmic_brightness = 0.0;     // brightness value between 0.0 to 1.0
@@ -106,7 +106,7 @@ void main(void) {
             event_counter++;
         // or a single event    
         } else if (interrupt_single_event && !interrupt_cosmic_event) {
-            PWM5_LoadDutyValue(900);    // 0-999
+            PWM5_LoadDutyValue(500);    // 0-999
             interrupt_single_event = false;
             event_counter++;
         } else {
@@ -137,7 +137,7 @@ void main(void) {
         SPI1_ExchangeByte(0x00);
         SPI1_ExchangeByte(0x00);
         SPI1_ExchangeByte(0x00);
-        SPI1_ExchangeByte(0b11100100); // 1x LED data [111] + brightness[5]
+        SPI1_ExchangeByte(0b11101111); // 1x LED data [111] + brightness[5]
         SPI1_ExchangeByte(blue);  //B
         SPI1_ExchangeByte(green); //G
         SPI1_ExchangeByte(red);   //R
@@ -148,11 +148,11 @@ void main(void) {
         
         // timer0 flag (16 seconds), check the event count and adjust DAC output
         if (TMR0IF){
-            if (event_counter > 100 && DAC1_GetOutput() > 0b00111) {
-                DAC1_SetOutput(DAC1_GetOutput() -1);
-            }
-            if (event_counter < 3 && DAC1_GetOutput() < 0b11111) {
+            if (event_counter > 40 && DAC1_GetOutput() < 0b11111) {
                 DAC1_SetOutput(DAC1_GetOutput() +1);
+            }
+            if (event_counter < 3 && DAC1_GetOutput() > 0b00111) {
+                DAC1_SetOutput(DAC1_GetOutput() -1);
             }
             
             TMR0IF = 0;
