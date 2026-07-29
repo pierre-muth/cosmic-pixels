@@ -55,11 +55,11 @@
 #include "interrupt_manager.h"
 #include "spi1.h"
 #include "tmr2.h"
-#include "tmr0.h"
 #include "pwm5.h"
+#include "tmr0.h"
 #include "fvr.h"
-#include "dac1.h"
 #include "ext_int.h"
+#include "dac1.h"
 
 
 
